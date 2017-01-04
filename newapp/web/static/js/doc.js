@@ -3,7 +3,7 @@
  */
 $(function () {
     var ipMap = {
-        "innerNet":"192.168.1.101:80",
+        "innerNet":"127.0.0.1:80",
         "outNet":"192.168.202.46:80"
     }
     var servletMap = {
@@ -471,6 +471,7 @@ $(function () {
                 success: function (demand, status) {
                     if (demand["success"] == "Y") {
                         currRefName = demand["name"] ;
+                        $('#refTable').bootstrapTable('resetSearch');
                         $('#refTable').bootstrapTable("load",demand.data) ;
                     }
                 },
