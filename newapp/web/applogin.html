@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <title>登录</title>
+    <link rel="stylesheet" href="static/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="static/lib/bootstrap/css/bootstrapValidator.min.css">
+    <link rel="stylesheet" href="static/css/docman.css"/>
+</head>
+<style type='text/css'>
+    #code{
+        font-family:Arial,宋体;
+        font-style:italic;
+        color:green;
+        border:0;
+        /*padding:2px 3px;*/
+        /*letter-spacing:3px;*/
+        font-weight:bolder;
+    }
+</style>
+<body>
+<div class="container" id="loginapp">
+    <div class="row">
+        <div class="app-title col-md-12"><h1>{{apptitle}}</h1></div>
+    </div>
+    <div class="row">
+        <div class="login-input-group">
+            <form method="post" id="loginform">
+                <div class="form-group">
+                    <div class="col-xs-12">
+                    <input type="text" id="username" name="username" v-model='username'  class="login-input form-control" placeholder="用户名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                    <input type="password" id="password" name="password" v-model='password' class="login-input form-control" placeholder="密码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-8">
+                    <input type = "text" class="login-input form-control"  v-model='inputcode' name="checkInput"/>
+                    </div>
+                    <div class="col-xs-4">
+                    <input type="button" class="btn btn-default form-control" id="code" v-model='checkcode' name="realCheckCode" v-on:click="createCode" style="margin-top: 10px" title='点击更换验证码' />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                <button type="button" class="btn btn-primary login-input form-control" v-on:click="login">登录</button>
+                        </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script src="static/lib/jquery/jquery-1.11.3.min.js"></script>
+<script src="static/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="static/lib/bootstrap/js/bootstrapValidator.min.js"></script>
+<script src="static/lib/other/vue.js"></script>
+<script src="static/js/loginapp.js"></script>
+</html>
+</html>

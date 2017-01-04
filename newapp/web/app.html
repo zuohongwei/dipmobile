@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+    <title>Index</title>
+    <link rel="stylesheet" href="static/lib/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="static/css/docman.css"/>
+    <link rel="stylesheet" href="static/lib/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="static/lib/bootstrap/css/bootstrap-table.css"/>
+    <link rel="stylesheet" href="static/lib/bootstrap/css/bootstrap-datepicker.min.css">
+</head>
+<body>
+<div class="container-fluid page" id="loginPage" style="display: none">
+    <div class="row">
+        <div class="container">
+            <div class="col-xs-12" style="margin-bottom: 50px;">
+                <a href="#"><img class="login-logo" src="static/img/logo.jpg" style="border: 0px;margin-top: 20px;"></a>
+            </div>
+            <div class="form-container">
+                <form role="form" class="login-form">
+                    <div class="col-xs-12 form-group">
+                        <input type="text" class="form-control" name="username" id="username" placeholder="用户">
+                    </div>
+                    <div class="col-xs-12 form-group">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="密码">
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-8">
+                            <input class="form-control" id="checkCodeInput" name="checkCodeInput" placeholder="验证码">
+                        </div>
+                        <div class="col-xs-4">
+                            <input class="form-control" id="checkCode" name="checkCode" type="button">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 checkbox">
+                        <label>
+                            <input type="radio" name="inner-out-net" id="innerNet" checked="" required> 内网
+                        </label>
+                        <label>
+                            <input type="radio" name="inner-out-net" id="outNet"> 外网
+                        </label>
+                    </div>
+                    <div class="col-xs-12">
+                        <button class="btn btn-primary btn-block" type="button" id="btn_login">登录</button>
+                    </div>
+                </form>
+            </div> <!-- /container -->
+        </div>
+    </div>
+</div>
+<div class="container-fluid page" id="docListPage" style="display: none">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="tag_panel">
+                <h3>数据采集列表</h3>
+                <i class="glyphicon glyphicon-off" id="logOff"></i>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ul class="nav " id="docListMenu"></ul>
+            <script id="docList-template" type="x-handlebars-template">​
+                {{#each this}}
+                    <!--<li><a href="#" >{{docSuperName}}</a>-->
+                        <li>{{docSuperName}}
+                        <ul class="nav">
+                            {{#each docDetails}}
+                            <li><a href="#doc/{{doctypecode}}/{{doctypename}}" id={{doctypecode}}>{{doctypename}}<span class='fa fa-angle-right'></span></a></li>
+                            {{/each}}
+                        </ul>
+                    </li>
+                {{/each}}
+            </script>
+        </div>
+    </div>
+</div>
+<div class="container-fluid page" id="docPage" style="display: none">
+    <div class="panel panel-default" id="listtable" style="padding-bottom:0px">
+        <div class="panel-heading">
+            <div class="tag_panel">
+                <i class="fa fa-angle-left" id="i_back"></i>
+                <h3>测试</h3>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="toolbar">
+                <button class="btn btn-primary" id="btn_query" disabled="disabled"><i class="fa fa-search"></i></button>
+                <button class="btn btn-primary" id="btn_add" disabled="disabled"><i class="fa fa-plus"
+                                                                                    aria-hidden="true"></i></button>
+                <button class="btn btn-primary" id="btn_delete" disabled="disabled"><i class="fa fa-remove"
+                                                                                       aria-hidden="true"></i></button>
+            </div>
+            <table id="doc_table">
+            </table>
+            <!-- Modal -->
+            <div class="modal fade" id="qryModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="tag_panel">
+                            <button type="button" class="close" data-dismiss="modal"><i class="fa fa-angle-left"></i></button>
+                            <h3>测试</h3>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" id="qry_confirm"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                <button type="button" class="btn btn-danger" id="qry_clear"><i class="glyphicon glyphicon-repeat"></i></button>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" id="qry_modal_form">
+                                <script id="qry_modal_temp" type="x-handlebars-template">​
+                                {{#each this}}
+                                {{#if is_qrytemp}}
+                                <div class="form-group">
+                                    {{inputHtml this}}
+                                </div>
+                                {{/if}}
+                                {{/each}}
+                                </script>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="addModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3>测试</h3>
+                            <div class="form-group" id="add_btn_group">
+                                <button type="button" class="btn btn-primary" id="btn_add_save"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                <button type="button" class="btn btn-danger" id="btn_add_clear"><i class="glyphicon glyphicon-repeat"></i></button>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" id="add_modal_form">
+                                <script id="add_modal_temp" type="x-handlebars-template">​
+                                {{#each this}}
+                                {{#if is_addtemp}}
+                                <div class="form-group">
+                                    {{inputHtml this}}
+                                </div>
+                                {{/if}}
+                                {{/each}}
+                                </script>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="editModal" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3>测试</h3>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" id="btn_edit_save"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                <button type="button" class="btn btn-danger" id="btn_edit_clear"><i class="glyphicon glyphicon-repeat"></i></button>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" id="edit_modal_form">
+                                <script id="edit_modal_temp" type="x-handlebars-template">​
+                                {{#each this}}
+                                {{#if is_edittemp}}
+                                <div class="form-group">
+                                    {{inputHtml this}}
+                                </div>
+                                {{/if}}
+                                {{/each}}
+                                </script>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal fade" id="refModal" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h3>参照</h3>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" id="ref_confirm"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                <button type="button" class="btn btn-danger" id="ref_cancel"><i class="glyphicon glyphicon-repeat"></i></button>
+                            </div>
+                            <input id="refFieldCode" style="display: none">
+                            <input id="refModalCode" style="display: none">
+                        </div>
+                        <div class="modal-body">
+                            <table id="refTable">
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="static/lib/jquery/jquery-1.11.3.js"></script>
+<script src="static/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="static/lib/bootstrap/js/bootstrap-table.js"></script>
+<script type="text/javascript" src="static/lib/bootstrap/locale/bootstrap-table-zh-CN.js"></script>
+<script src="static/lib/bootstrap/js/bootstrapValidator.min.js"></script>
+<script src="static/lib/other/handlebars-v4.0.5.js"></script>
+<script src="static/js/doc.js"></script>
+<!--<script type="text/javascript" src="static/js/listtable.js"></script>-->
+<script src="static/lib/bootstrap/js/bootstrap-datepicker.min.js"></script>
+<script src="static/lib/bootstrap/locale/bootstrap-datepicker.zh-CN.min.js"></script>
+</html>
