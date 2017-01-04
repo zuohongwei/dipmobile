@@ -592,6 +592,18 @@ $(function () {
             window.location.hash = "#docList" ;
         }) ;
 
+        $("#i_qryback").click(function () {
+            $('#qryModal').modal('toggle');
+        }) ;
+        $("#i_addback").click(function () {
+            $('#addModal').modal('toggle');
+        }) ;
+        $("#i_editback").click(function () {
+            $('#editModal').modal('toggle');
+        }) ;
+        $("#i_refback").click(function () {
+            $('#refModal').modal('toggle');
+        }) ;
         $("#btn_add_save").click(function () {
             var saveParam = getSaveParam("add") ;
             $.ajax({
