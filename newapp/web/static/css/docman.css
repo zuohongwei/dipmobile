@@ -1,0 +1,198 @@
+html,body{
+    height: 100%;
+}
+h3{
+    color: #428bca;
+}
+.login-logo{
+    width: 100% ;
+}
+#checkCode{
+    font-family:Arial,宋体;
+    font-style:italic;
+    color:green;
+    border:0;
+    font-weight:bolder;
+}
+.app-title{
+    color: #428bca;
+    text-align: center;
+    padding: 10%;
+}
+
+ul li span {
+    float: right;
+}
+
+.nc-right{
+    float:right;
+    margin-right: 10px;
+}
+
+.login-box{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center space-between;
+}
+.login-input-group{
+    height: 300px;
+    display: flex;
+    flex-direction:  column;
+    justify-content: center;
+}
+
+.login-input{
+    margin-top: 10px;
+}
+
+.menu-listmenu >li{
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+/*.nav li:hover{*/
+    /*background-color:#428bca ;*/
+/*}*/
+
+.list-qry-btn-group{
+    padding-right: 5px;
+}
+
+.x_panel {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px 17px;
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #E6E9ED;
+    -webkit-column-break-inside: avoid;
+    -moz-column-break-inside: avoid;
+    column-break-inside: avoid;
+    opacity: 1;
+    transition: all .2s ease; }
+
+.x_title {
+    border-bottom: 2px solid #E6E9ED;
+    padding: 1px 5px 6px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/*.x_title .filter {*/
+    /*width: 40%;*/
+    /*float: right; }*/
+
+.x_title h2 {
+    margin: 5px 0 6px;
+    float: left;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; }
+
+/*.x_title h2 small {*/
+    /*margin-left: 10px; }*/
+
+/*.x_title span {*/
+    /*color: #BDBDBD; }*/
+
+.x_content {
+    padding: 0 5px 6px;
+    position: relative;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-top: 5px; }
+
+/*.x_content h4 {*/
+    /*font-size: 16px;*/
+    /*font-weight: 500; }*/
+.panel_toolbox {
+    float: right;
+    min-width: 70px; }
+
+.panel_toolbox > li {
+    float: left;
+    cursor: pointer; }
+
+.panel_toolbox > li > a {
+    padding: 5px;
+    /*color: #C5C7CB;*/
+    font-size: 14px; }
+
+.tag_panel{
+    display: flex;
+}
+
+.tag_panel > i{
+    flex: 0;
+}
+.tag_panel > h3{
+    flex: 1;
+    color: #428bca;
+    text-align: center;
+}
+
+#logOff{
+    font-size: small;
+    color:black;
+}
+
+.tag_panel > i{
+    display: flex;
+    align-items: center;
+    color: #428bca;
+    font-size: 25px;
+    margin-right: 20px;
+}
+.tag_panel > ul{
+    display: flex;
+    flex: 0;
+    align-items: center;
+}
+
+.tag_panel > ul > li > a{
+    padding: 5px;
+    /*display: flex;*/
+    /*color: black;*/
+}
+
+
+.panel-body > .panel-heading{
+    display: flex;
+    align-items: center;
+    flex: 0;
+}
+
+.panel-body > .panel-heading > i{
+    flex: 0;
+    font-size: 1.5em;
+    color: #428bca;
+}
+
+.panel-body > .panel-heading > h3{
+    flex: 1;
+    /*font-size: 2em;*/
+    text-align: center;
+    /*margin: 5px 0 6px;*/
+    color: #428bca;
+    /*flex: 1;*/
+}
+.fixedHeader {
+    position:fixed;
+}
+.modal-body {
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+}
+
+.pagination-info{
+    display: none;
+}
+#doc_table > thead > tr > th.detail,
+#doc_table >tbody > tr:not(.detail-view) > td:first-of-type{
+display: none;
+}
