@@ -3,7 +3,7 @@
  */
 $(function () {
     var ipMap = {
-        "innerNet":"127.0.0.1:80",
+        "innerNet":"192.168.1.101:80",
         "outNet":"192.168.202.46:80"
     }
     var servletMap = {
@@ -398,7 +398,7 @@ $(function () {
                     maxViewMode: 2
                 });
                 $('.month').datepicker({
-                    format:'mm',
+                    format:'m',
                     language:'zh-CN',
                     autoclose:true,
                     minViewMode: 1,
@@ -436,6 +436,7 @@ $(function () {
                     pageSize: 10,                       //每页的记录行数（*）
                     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
                     search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    singleSelect:true,
                 }) ;
             }
         }
@@ -495,14 +496,16 @@ $(function () {
                 }
             })
             $('.modal').on('shown.bs.modal',function (event) {
-                var pStName = $(this).find("#P_STNAME").val() ;
-                if(pStName == '已审批'){
+                var pStatus = $(this).find("#P_STATUS").val() ;
+                if(pStatus != '0' && pStatus!='' && pStatus!=undefined){
                     $(this).find("input").attr("readonly","readonly") ;
                     $(this).find("#btn_edit_save").attr("disabled","disabled") ;
                     $(this).find("#btn_edit_clear").attr("disabled","disabled");
+                    $(this).find("span a").attr('disabled','disabled');
                 }else{
                     $(this).find("#btn_edit_save").removeAttr("disabled") ;
                     $(this).find("#btn_edit_clear").removeAttr("disabled");
+                    $(this).find("span a").removeAttr('disabled');
                     for(var i = 0 ;i < templateData.length ; i++){
                         if(templateData[i]["is_editfield"] == "Y"){
                             $(this).find("#"+templateData[i]["fieldcode"]).removeAttr("readonly") ;
@@ -642,6 +645,14 @@ $(function () {
                 alert('请选择有效数据');
                 return;
             }
+            for(var i = 0 ; i < arrSelections.length ; i++){
+                var p_Status = arrSelections[i]['P_STATUS'] ;
+                if(p_Status=='1'){
+                    alert('第'+(i+1)+'条数据已审批不能删除');
+                    return;
+                }
+            }
+
             if (confirm("确认要删除选择的数据吗？") == true) {
                 $.ajax({
                     type: "post",
