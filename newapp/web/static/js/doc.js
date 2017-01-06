@@ -3,7 +3,7 @@
  */
 $(function () {
     var ipMap = {
-        "innerNet":"127.0.0.1:80",
+        "innerNet":"192.168.1.101:80",
         "outNet":"192.168.202.46:80"
     }
     var servletMap = {
@@ -17,6 +17,16 @@ $(function () {
         "docDelete":"DocDeleteServlet"
     }
     var userName  ;
+    var refRowData ;
+    var currRefName ;
+    var refSeachMap = {
+
+    } ;
+    var docType = '' ;
+    var docName = '' ;
+    var templateData ;
+
+    var currRefFieldCode ;
     $(window).on("hashchange",function () {
         render(window.location.hash) ;
     })
@@ -121,7 +131,7 @@ $(function () {
                     }
                 },
                 error: function (arg1, arg2, arg3) {
-                    alert(arg1);
+                    alert("登陆失败");
                     $('#checkCode').trigger("click") ;
                 }
             } )
@@ -164,6 +174,7 @@ $(function () {
                 alert('Error');
             }
         });
+        $("#logOff").unbind("click") ;
         $("#logOff").click(function () {
             if (confirm("确认要退出吗？") == true) {
                 userName = undefined ;
@@ -175,10 +186,11 @@ $(function () {
     }
     function renderDoc() {
         var url = window.location.hash ;
-        var docType = url.split('/')[1] ;
-        var docName = decodeURI(url.split('/')[2]) ;
-        var templateData ;
-        var currRefName ;
+        docType = url.split('/')[1] ;
+        docName = decodeURI(url.split('/')[2]) ;
+        templateData ;
+
+        currRefFieldCode ;
         $("#docPage h3").html(docName) ;
         $.ajax({
             type: "post",
@@ -252,13 +264,15 @@ $(function () {
                     var fieldType = temp["fieldtype"] ;
                     var showFlag = temp["showflag"] == 'Y' ? true : false ;
                     var isRef = temp["fieldtype"] == "ref" ? true : false ;
+                    var isQryTemp = temp["is_qrytemp"] != undefined &&  temp["is_qrytemp"] == "Y"
                     var inPutType = fieldType == "number" ? "number":"text" ;
                     var html = '' ;
 
                     html += '<div class="form-group">' ;
-                    if(showFlag){
+                    if(showFlag || isQryTemp){
                         html += '<label for="'+fieldCode+'">'+fieldName+'</label>' ;
                     }
+
                     if(isRef){
                         html += '<div class="form-group input-group">' ;
                     }
@@ -270,11 +284,15 @@ $(function () {
                     if(fieldType == "number"){
                         html += ' onchange="validateFloatKeyPress(this,'+temp["digits"]+') "' ;
                     }
-                    html += ' class="form-control '+fieldType+'"' ;
+                    html += ' class="form-control ';
+                    if(temp["is_editfield"] == undefined || temp["is_editfield"]=='Y'){
+                        html += fieldType ;
+                    }
+                        html += ' "' ;
                     if(temp["is_editfield"] != undefined && temp["is_editfield"]=='N'){
                         html += " readonly " ;
                     }
-                    if(!showFlag){
+                    if(!showFlag && !isQryTemp){
                         html += ' style="display: none;"' ;
                     }
                     html += '>' ;
@@ -284,7 +302,7 @@ $(function () {
                         if(temp["is_editfield"] != undefined && temp["is_editfield"]=='N'){
                             html += ' disabled="disabled" ' ;
                         }
-                        html += '><i class="fa fa-search"></i></a></span>' ;
+                        html += '><i class="fa fa-search" ></i></a></span>' ;
                         html += '</div>' ;
                     }
                     return new Handlebars.SafeString(html);
@@ -353,7 +371,7 @@ $(function () {
                     formatter: function operateFormatter(value, row, index) {
                         return [
                             '<a class="roweidt" href="#">',
-                            '<i class="glyphicon glyphicon-chevron-right"></i>',
+                            '>',
                             '</a> '
                         ].join('');
                     }
@@ -395,35 +413,37 @@ $(function () {
                     language:'zh-CN',
                     autoclose:true,
                     minViewMode: 2,
-                    maxViewMode: 2
+                    maxViewMode: 2,
+                    enableOnReadonly:false
                 });
                 $('.month').datepicker({
                     format:'m',
                     language:'zh-CN',
                     autoclose:true,
                     minViewMode: 1,
-                    maxViewMode: 1
+                    maxViewMode: 1,
+                    enableOnReadonly:false
                 });
                 $('.date').datepicker({
                     format:'yyyy-mm-dd',
                     language:'zh-CN',
                     autoclose:true,
                     minViewMode: 0,
-                    maxViewMode: 0
+                    maxViewMode: 0,
+                    enableOnReadonly:false
                 });
                 $('.date_ref').datepicker({
                     format:'yyyymmdd',
                     language:'zh-CN',
                     autoclose:true,
                     minViewMode: 0,
-                    maxViewMode: 0
+                    maxViewMode: 0,
+                    enableOnReadonly:false
                 });
             }
             function initRefMadal() {
                 $("#refTable").bootstrapTable({
                     columns: [{
-                        "checkbox":true
-                    },{
                         title: '编码',
                         field: 'C_CODE',
                     },{
@@ -437,8 +457,12 @@ $(function () {
                     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
                     search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
                     singleSelect:true,
+                    onClickRow:onRefTalbeRowClick
                 }) ;
             }
+        }
+        function onRefTalbeRowClick(row,ele,field) {
+            refRowData = row ;
         }
         function setBtnPower(btnPower) {
             for(var key in btnPower){
@@ -463,60 +487,7 @@ $(function () {
             alert(errorMsg) ;
             window.location.hash = "docList" ;
         }
-        function refreshRefData(fieldcode,fieldname) {
-            $("#refModal h3").html(fieldname) ;
-            $.ajax({
-                type: "post",
-                url:getServerUrl("docRef")+JSON.stringify({"doctypecode":docType,"username":userName,"fieldcode":fieldcode}) ,
-                success: function (demand, status) {
-                    if (demand["success"] == "Y") {
-                        currRefName = demand["name"] ;
-                        $('#refTable').bootstrapTable('resetSearch');
-                        $('#refTable').bootstrapTable("load",demand.data) ;
-                    }
-                },
-                error: function () {
-                    alert('Error');
-                }
-            });
-        }
-        function modaleSet() {
-            var zIndex = 1040 + (10 * $('.modal:visible').length);
-            $(this).css('z-index', zIndex);
-            setTimeout(function() {
-                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-            }, 0);
-            $('#refModal').on('shown.bs.modal',function (event) {
-                if(this.id == "refModal"){
-                    var fieldCode = $(event.relatedTarget).closest('.input-group').children('input').attr("id") ;
-                    var fieldName = $(event.relatedTarget).parent().parent().parent().children('label').text() ;
-                    var currRefModalCode = $(event.relatedTarget).parents(".modal").attr("id") ;
-                    $(this).find("#refFieldCode").val(fieldCode) ;
-                    $(this).find("#refModalCode").val(currRefModalCode) ;
-                    refreshRefData(fieldCode,fieldName) ;
-                }
-            })
-            $('.modal').on('shown.bs.modal',function (event) {
-                var pStatus = $(this).find("#P_STATUS").val() ;
-                if(pStatus != '0' && pStatus!='' && pStatus!=undefined){
-                    $(this).find("input").attr("readonly","readonly") ;
-                    $(this).find("#btn_edit_save").attr("disabled","disabled") ;
-                    $(this).find("#btn_edit_clear").attr("disabled","disabled");
-                    $(this).find("span a").attr('disabled','disabled');
-                }else{
-                    $(this).find("#btn_edit_save").removeAttr("disabled") ;
-                    $(this).find("#btn_edit_clear").removeAttr("disabled");
-                    $(this).find("span a").removeAttr('disabled');
-                    for(var i = 0 ;i < templateData.length ; i++){
-                        if(templateData[i]["is_editfield"] == "Y"){
-                            $(this).find("#"+templateData[i]["fieldcode"]).removeAttr("readonly") ;
-                        }else{
-                            $(this).find("#"+templateData[i]["fieldcode"]).attr("readonly","readonly") ;
-                        }
-                    }
-                }
-            })
-        }
+
         function getQryParam(columns) {
             var param = {} ;
             param["doctypecode"] = docType ;
@@ -588,21 +559,26 @@ $(function () {
         }
 
         $("#docPage button").unbind("click") ;
+        $("#i_back").unbind("click") ;
+        $("#i_qryback").unbind("click") ;
+        $("#i_addback").unbind("click") ;
+        $("#i_editback").unbind("click") ;
+        $("#i_refback").unbind("click") ;
         $("#i_back").click(function () {
             window.location.hash = "#docList" ;
         }) ;
 
         $("#i_qryback").click(function () {
-            $('#qryModal').modal('toggle');
+            $('#qryModal').modal('hide');
         }) ;
         $("#i_addback").click(function () {
-            $('#addModal').modal('toggle');
+            $('#addModal').modal('hide');
         }) ;
         $("#i_editback").click(function () {
-            $('#editModal').modal('toggle');
+            $('#editModal').modal('hide');
         }) ;
         $("#i_refback").click(function () {
-            $('#refModal').modal('toggle');
+            $('#refModal').modal('hide');
         }) ;
         $("#btn_add_save").click(function () {
             var saveParam = getSaveParam("add") ;
@@ -716,27 +692,114 @@ $(function () {
             $("#edit_modal_form input").val('');
         });
         $("#ref_confirm").click(function () {
-            var arrselections = $("#refTable").bootstrapTable("getSelections") ;
-            if (arrselections.length <= 0) {
+            if (refRowData == undefined) {
                 alert('请选择有效数据');
                 return;
             }
-            var c_code = arrselections[0]["C_CODE"] ;
-            var c_name = arrselections[0]["C_NAME"] ;
+            var c_code = refRowData["C_CODE"] ;
+            var c_name = refRowData["C_NAME"] ;
 
             $('#'+$("#refModalCode").val()+' #'+$('#refFieldCode').val()).val(c_code) ;
             $('#'+$("#refModalCode").val()+' #'+currRefName).val(c_name) ;
 
             $('#refModal').modal('toggle');
         });
-        $("#ref_cancel").click(function () {
-            $("#refModal input").val('') ;
-            $('#refModal').modal('toggle');
+        $("#ref_qry").click(function () {
+            var fieldCode = currRefFieldCode ;
+            var seachText = $("#refModal").find(".search input").val() ;
+            refreshRefData(fieldCode,seachText) ;
         }) ;
     }
     function getServerUrl(requestType) {
         var netType = $('.login-form input:radio:checked').attr("id") ;
         return 'http://'+ipMap[netType]+"/"+servletMap[requestType]+"?data=" ;
+    }
+    function refreshRefData(fieldcode,searchText) {
+        var param = {} ;
+        param["doctypecode"] = docType ;
+        param["username"] = userName ;
+        param["fieldcode"] = fieldcode ;
+        param["searchtext"] = searchText != undefined ? searchText : "" ;
+        $.ajax({
+            type: "post",
+            url:getServerUrl("docRef")+JSON.stringify(param) ,
+            success: function (demand, status) {
+                if (demand["success"] == "Y") {
+                    currRefName = demand["name"] ;
+                    // $('#refTable').bootstrapTable('resetSearch');
+
+                    $('#refTable').bootstrapTable("load",demand.data) ;
+                    // if(refSeachMap[fieldcode]){
+                    //     $('#refTable').bootstrapTable("resetSearch",refSeachMap[fieldcode]) ;
+                    // }else{
+                    //     $('#refTable').bootstrapTable('resetSearch') ;
+                    // }
+                    $('#refTable').bootstrapTable('resetSearch',searchText) ;
+
+                }
+            },
+            error: function () {
+                alert('Error');
+            }
+        });
+    }
+    function modaleSet() {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+        $('#refModal').on('shown.bs.modal',function (event) {
+            if(this.id == "refModal"){
+                var fieldCode = $(event.relatedTarget).closest('.input-group').children('input').attr("id") ;
+                var fieldName = $(event.relatedTarget).parent().parent().parent().children('label').text() ;
+                var currRefModalCode = $(event.relatedTarget).parents(".modal").attr("id") ;
+                $(this).find("#refFieldCode").val(fieldCode) ;
+                $(this).find("#refModalCode").val(currRefModalCode) ;
+
+                refRowData = undefined ;
+                $("#refModal h3").html(fieldName) ;
+                refreshRefData(fieldCode,refSeachMap[fieldCode]) ;
+                currRefFieldCode = fieldCode ;
+            }
+        })
+        $('#refModal').on('hide.bs.modal',function (event) {
+            var seachText = $(this).find(".search input").val() ;
+            refSeachMap[currRefFieldCode] = seachText ;
+        })
+        $('.modal').on('shown.bs.modal',function (event) {
+            if(this.id == "refModal"){
+                return ;
+            }
+            if(this.id == "qryModal"){
+                $(this).find("span a").removeAttr("disabled") ;
+                $(this).find("input").removeAttr("readonly") ;
+            }else if(this.id == "editModal"){
+                var pStatus = $(this).find("#P_STATUS").val() ;
+                if(pStatus != '0' && pStatus!='' && pStatus!=undefined){
+                    $(this).find("input").attr("readonly","readonly") ;
+                    $(this).find("#btn_edit_save").attr("disabled","disabled") ;
+                    $(this).find("#btn_edit_clear").attr("disabled","disabled");
+                    $(this).find("span a").attr('disabled','disabled');
+                }else{
+                    $(this).find("#btn_edit_save").removeAttr("disabled") ;
+                    $(this).find("#btn_edit_clear").removeAttr("disabled");
+                    for(var i = 0 ;i < templateData.length ; i++){
+                        if(templateData[i]["is_editfield"] == "Y"){
+                            $(this).find("#"+templateData[i]["fieldcode"]).removeAttr("readonly") ;
+                            if(templateData[i]["fieldtype"] == "ref"){
+                                $(this).find("#"+templateData[i]["fieldcode"]).parent().find("span a").removeAttr("disabled") ;
+                            }
+                        }else{
+                            $(this).find("#"+templateData[i]["fieldcode"]).attr("readonly","readonly") ;
+                            if(templateData[i]["fieldtype"] == "ref"){
+                                $(this).find("#"+templateData[i]["fieldcode"]).parent().find("span a").attr('disabled','disabled');
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 
     $(window).trigger("hashchange") ;
