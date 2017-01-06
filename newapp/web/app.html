@@ -62,7 +62,7 @@
             <script id="docList-template" type="x-handlebars-template">​
             {{#each this}}
             <!--<li><a href="#" >{{docSuperName}}</a>-->
-            <li>{{docSuperName}}
+            <li><strong>{{docSuperName}}</strong>
                 <ul class="nav">
                     {{#each docDetails}}
                     <li><a href="#doc/{{doctypecode}}/{{doctypename}}" id={{doctypecode}}>{{doctypename}}<span class='fa fa-angle-right'></span></a></li>
@@ -102,7 +102,7 @@
                                 <i class="fa fa-angle-left" style="color: rgb(0, 126, 255);" id="i_qryback"></i>
                                 <h3>测试</h3>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top: 20px">
                                 <button type="button" class="btn btn-primary" id="qry_confirm"><i class="glyphicon glyphicon-search" ></i></button>
                                 <button type="button" class="btn btn-primary" id="qry_clear"><i class="glyphicon glyphicon-repeat" ></i></button>
                             </div>
@@ -132,8 +132,8 @@
                                 <i class="fa fa-angle-left" style="color: rgb(0, 126, 255);" id="i_addback"></i>
                                 <h3>测试</h3>
                             </div>
-                            <div class="form-group" id="add_btn_group">
-                                <button type="button" class="btn btn-primary" id="btn_add_save"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                            <div class="form-group" id="add_btn_group" style="margin-top: 20px">
+                                <button type="button" class="btn btn-primary" id="btn_add_save"><i class="glyphicon glyphicon-save"></i></button>
                                 <button type="button" class="btn btn-primary" id="btn_add_clear"><i class="glyphicon glyphicon-repeat"></i></button>
                             </div>
                         </div>
@@ -163,8 +163,8 @@
                                 <i class="fa fa-angle-left" style="color: rgb(0, 126, 255);" id="i_editback"></i>
                                 <h3>测试</h3>
                             </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" id="btn_edit_save"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                            <div class="form-group" style="margin-top: 20px">
+                                <button type="button" class="btn btn-primary" id="btn_edit_save"><i class="glyphicon glyphicon-save"></i></button>
                                 <button type="button" class="btn btn-primary" id="btn_edit_clear"><i class="glyphicon glyphicon-repeat"></i></button>
                             </div>
                         </div>
@@ -194,9 +194,9 @@
                                 <i class="fa fa-angle-left" style="color: rgb(0, 126, 255);" id="i_refback"></i>
                                 <h3>参照</h3>
                             </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" id="ref_confirm"><i class="glyphicon glyphicon-search"></i></button>
-                                <button type="button" class="btn btn-primary" id="ref_cancel"><i class="glyphicon glyphicon-repeat"></i></button>
+                            <div class="form-group" style="margin-top: 20px">
+                                <button type="button" class="btn btn-primary" id="ref_confirm"><i class="glyphicon glyphicon-check"></i></button>
+                                <button type="button" class="btn btn-primary" id="ref_qry"><i class="glyphicon glyphicon-search" ></i></button>
                             </div>
                             <input id="refFieldCode" style="display: none">
                             <input id="refModalCode" style="display: none">
