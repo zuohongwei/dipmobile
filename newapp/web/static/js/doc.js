@@ -3,7 +3,7 @@
  */
 $(function () {
     var ipMap = {
-        "innerNet":"192.168.1.101:80",
+        "innerNet":"127.0.0.1:80",
         "outNet":"192.168.202.46:80"
     }
     var servletMap = {
@@ -25,6 +25,7 @@ $(function () {
     var docType = '' ;
     var docName = '' ;
     var templateData ;
+    var qryTemplateData ;
 
     var currRefFieldCode ;
     $(window).on("hashchange",function () {
@@ -189,7 +190,7 @@ $(function () {
         docType = url.split('/')[1] ;
         docName = decodeURI(url.split('/')[2]) ;
         templateData ;
-
+        qryTemplateData;
         currRefFieldCode ;
         $("#docPage h3").html(docName) ;
         $.ajax({
@@ -198,13 +199,10 @@ $(function () {
             success: function (demand) {
                 if (demand["success"] == "Y") {
                     templateData = demand.result;
-
+                    qryTemplateData = demand.qryresult;
                     for(var i = 0 ; i < templateData.length ; i++){
                         if(templateData[i]["is_addtemp"] == 'N'){
                             delete templateData[i]["is_addtemp"] ;
-                        }
-                        if(templateData[i]["is_qrytemp"] == 'N'){
-                            delete templateData[i]["is_qrytemp"] ;
                         }
                         if(templateData[i]["is_edittemp"] == 'N'){
                             delete templateData[i]["is_edittemp"] ;
@@ -269,8 +267,10 @@ $(function () {
                     var html = '' ;
 
                     html += '<div class="form-group">' ;
-                    if(showFlag || isQryTemp){
+                    if(showFlag){
                         html += '<label for="'+fieldCode+'">'+fieldName+'</label>' ;
+                    }else{
+                        html += '<label for="'+fieldCode+'" style="display: none">'+fieldName+'</label>' ;
                     }
 
                     if(isRef){
@@ -288,11 +288,11 @@ $(function () {
                     if(temp["is_editfield"] == undefined || temp["is_editfield"]=='Y'){
                         html += fieldType ;
                     }
-                        html += ' "' ;
+                    html += ' "' ;
                     if(temp["is_editfield"] != undefined && temp["is_editfield"]=='N'){
                         html += " readonly " ;
                     }
-                    if(!showFlag && !isQryTemp){
+                    if(!showFlag){
                         html += ' style="display: none;"' ;
                     }
                     html += '>' ;
@@ -330,11 +330,17 @@ $(function () {
                         "formName" : "edit_modal_form"
                     }
                 ]
+
                 modals.forEach(function (names) {
                     var theTemplateScript = $("#"+names["tempName"]).html();
                     var theTemplate = Handlebars.compile (theTemplateScript);
-                    var templateHtml = theTemplate(templateData) ;
-                    $('#'+names["formName"]).append (templateHtml);
+                    if(names["tempName"]=="qry_modal_temp"){
+                        var templateHtml = theTemplate(qryTemplateData) ;
+                        $('#'+names["formName"]).append (templateHtml);
+                    }else{
+                        var templateHtml = theTemplate(templateData) ;
+                        $('#'+names["formName"]).append (templateHtml);
+                    }
                 })
                 initDatePicker() ;
                 initRefMadal() ;
@@ -384,7 +390,12 @@ $(function () {
 
                 for(var i = 0 ; i < templateData.length ; i++){
                     if(templateData[i]["is_listtemp"] == "Y" && templateData[i]["showflag"] == "Y"){
-                        html.push('<p><b>'+templateData[i]["fieldname"]+':</b> '+row[templateData[i]["fieldcode"]]+'</p>');
+                        var value = row[templateData[i]["fieldcode"]] ;
+                        if(templateData[i]["fieldtype"]  == "number"){
+                            var digits = templateData[i]["digits"] ;
+                            value = new Number(value).toFixed(digits) ;
+                        }
+                        html.push('<p><b>'+templateData[i]["fieldname"]+':</b> '+value+'</p>');
                     }
                 }
 
@@ -457,6 +468,7 @@ $(function () {
                     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
                     search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
                     singleSelect:true,
+                    striped: true,                      //是否显示行间隔色
                     onClickRow:onRefTalbeRowClick
                 }) ;
             }
@@ -774,6 +786,8 @@ $(function () {
             if(this.id == "qryModal"){
                 $(this).find("span a").removeAttr("disabled") ;
                 $(this).find("input").removeAttr("readonly") ;
+                $(this).find("input").css('display', "block");
+                $(this).find("label").css('display', "block");
             }else if(this.id == "editModal"){
                 var pStatus = $(this).find("#P_STATUS").val() ;
                 if(pStatus != '0' && pStatus!='' && pStatus!=undefined){
@@ -802,6 +816,7 @@ $(function () {
         })
     }
 
+
     $(window).trigger("hashchange") ;
 })
 
@@ -809,3 +824,4 @@ function validateFloatKeyPress(el,digits) {
     var v = parseFloat(el.value);
     el.value = (isNaN(v)) ? '' : v.toFixed(digits);
 }
+

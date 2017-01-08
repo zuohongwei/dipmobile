@@ -2,7 +2,7 @@ html,body{
     height: 100%;
 }
 h3{
-    color: #428bca;
+    color: #337AB7;
 }
 .login-logo{
     width: 100% ;
@@ -15,7 +15,7 @@ h3{
     font-weight:bolder;
 }
 .app-title{
-    color: #428bca;
+    color: #337AB7;
     text-align: center;
     padding: 10%;
 }
@@ -132,7 +132,7 @@ ul li span {
 }
 .tag_panel > h3{
     flex: 1;
-    color: #428bca;
+    color: #337AB7;
     text-align: center;
 }
 
@@ -145,8 +145,9 @@ ul li span {
     display: flex;
     align-items: center;
     color: #428bca;
-    font-size: 25px;
+    font-size: 24px;
     margin-right: 20px;
+    margin-top: 5px;
 }
 .tag_panel > ul{
     display: flex;
@@ -178,13 +179,18 @@ ul li span {
     /*font-size: 2em;*/
     text-align: center;
     /*margin: 5px 0 6px;*/
-    color: #428bca;
+    color: #337AB7;
     /*flex: 1;*/
 }
 .fixedHeader {
     position:fixed;
 }
 .modal-body {
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+}
+
+.panel-body{
     max-height: calc(100vh - 210px);
     overflow-y: auto;
 }
@@ -196,3 +202,12 @@ ul li span {
 #doc_table >tbody > tr:not(.detail-view) > td:first-of-type{
 display: none;
 }
+
+
+.table-hover > tbody > tr:hover {
+    background-color: #337AB7;
+}
+
+/*body{*/
+    /*font-size: 24px;*/
+/*}*/
