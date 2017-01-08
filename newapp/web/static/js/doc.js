@@ -184,6 +184,7 @@ $(function () {
         $("#logOff").click(function () {
             if (confirm("确认要退出吗？") == true) {
                 $("#checkCodeInput").val("") ;
+                $(".login-form").data('bootstrapValidator').resetForm();
                 userName = undefined ;
                 window.location.hash = "" ;
 
