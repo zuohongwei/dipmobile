@@ -1,6 +1,11 @@
 /**
  * Created by Administrator on 2016/12/31.
  */
+$(document).on('hidden.bs.modal', function (event) {
+    if ($('.modal:visible').length) {
+        $('body').addClass('modal-open');
+    }
+});
 $(function () {
     var ipMap = {
         "innerNet":"127.0.0.1:80",
@@ -178,8 +183,10 @@ $(function () {
         $("#logOff").unbind("click") ;
         $("#logOff").click(function () {
             if (confirm("确认要退出吗？") == true) {
+                $("#checkCodeInput").val("") ;
                 userName = undefined ;
                 window.location.hash = "" ;
+
             }else{
                 return ;
             }
@@ -235,7 +242,7 @@ $(function () {
                 sortable: false,                     //是否启用排序
                 sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
                 pageNumber: 1,                       //初始化加载第一页，默认第一页
-                pageSize: 10,                       //每页的记录行数（*）
+                pageSize: 25,                       //每页的记录行数（*）
                 pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
                 search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
                 strictSearch: true,
@@ -376,9 +383,9 @@ $(function () {
                     },
                     formatter: function operateFormatter(value, row, index) {
                         return [
-                            '<a class="roweidt" href="#">',
+                            '<div class="roweidt" href="#">',
                             '>',
-                            '</a> '
+                            '</div> '
                         ].join('');
                     }
                 })
@@ -464,7 +471,7 @@ $(function () {
                     toolbar:'#ref_toolbar',
                     pagination: true,                   //是否显示分页（*）
                     pageNumber: 1,                       //初始化加载第一页，默认第一页
-                    pageSize: 10,                       //每页的记录行数（*）
+                    pageSize: 25,                       //每页的记录行数（*）
                     pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
                     search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
                     singleSelect:true,
