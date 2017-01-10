@@ -213,9 +213,13 @@ display: none;
     color: white;
 }
 
-.table-hover > tbody > tr a:hover {
+.table-hover > tbody > tr:hover a {
     color: white;
 }
+
+/*.table-hover > tbody > tr a:hover {*/
+    /*color: white;*/
+/*}*/
 /*body{*/
     /*font-size: 24px;*/
 /*}*/

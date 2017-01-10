@@ -113,9 +113,11 @@ $(function () {
                 }
             }
         });
+        $("#checkCode").unbind("click") ;
         $('#checkCode').click(function () {
             createCode() ;
         }) ;
+        $("#btn_login").unbind("click") ;
         $('#btn_login').click(function () {
             $('.login-form').data("bootstrapValidator").validate() ;
             var flag = $('.login-form').data("bootstrapValidator").isValid() ;
@@ -384,8 +386,8 @@ $(function () {
                     },
                     formatter: function operateFormatter(value, row, index) {
                         return [
-                            '<div class="roweidt" href="#">',
-                            '>',
+                            '<div class="roweidt" >',
+                            '<a href="#"><i class="glyphicon glyphicon-chevron-right"></i></a>',
                             '</div> '
                         ].join('');
                     }
@@ -607,7 +609,7 @@ $(function () {
                 url:getServerUrl("docSave")+saveParam,
                 success: function (demand, status) {
                     if (demand["success"] == "Y") {
-                        $('#doc_table').bootstrapTable("prepend",JSON.parse(saveParam)["data"]) ;
+                        $('#doc_table').bootstrapTable("prepend",demand["data"]) ;
                         $("#add_modal_form input").val('');
                     }else{
                         alert(demand["msg"]) ;
